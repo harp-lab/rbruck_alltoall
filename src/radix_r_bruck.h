@@ -12,8 +12,8 @@
 
 int myPow(int x, unsigned int p);
 std::vector<int> convert10tob(int w, int N, int b);
+void calculate_commsteps_and_datablock_counts(int nprocs, int r, std::vector<int>& the_sd_pstep);
 
-//void uniform_radix_r_bruck(double timelist[][7], int it, int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);
 void uniform_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);
 
 void uniform_norotation_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);

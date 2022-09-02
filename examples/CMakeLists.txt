@@ -5,4 +5,7 @@ SET_SOURCE_FILES_PROPERTIES(${CFILES} PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-st
 
 add_executable(rbruck ./radix_r_bruck_example.cpp)
 
+add_executable(gerNum ./generate_ncomm_ndb.cpp)
+
 target_link_libraries(rbruck rbruckLib)
+target_link_libraries(gerNum rbruckLib)
