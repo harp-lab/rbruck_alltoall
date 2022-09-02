@@ -28,4 +28,6 @@ void uniform_isplit_r_bruck(int n, int r, char *sendbuf, int sendcount, MPI_Data
 
 void uniform_norot_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);
 
+void optimized_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);
+
 #endif /* SRC_RADIX_R_BRUCK_H_ */
