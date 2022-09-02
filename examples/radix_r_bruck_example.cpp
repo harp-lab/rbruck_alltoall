@@ -41,10 +41,11 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+
 static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector<int> bases, int warmup) {
 
 	int basecount = bases.size();
-	for (int n = 1; n <= 1; n = n * 2) {
+	for (int n = 2; n <= 2048; n = n * 2) {
 		long long* send_buffer = new long long[n*nprocs];
 		long long* recv_buffer = new long long[n*nprocs];
 
@@ -216,7 +217,6 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 //			std::cout << "----------------------------------------------------------------" << std::endl<< std::endl;
 //
 //
-
 
 		delete[] send_buffer;
 		delete[] recv_buffer;
