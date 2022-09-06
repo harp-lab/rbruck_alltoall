@@ -32,7 +32,7 @@ void uniform_modified_inverse_r_bruck(int r, char *sendbuf, int sendcount, MPI_D
 
 	int comm_steps = (r - 1)*w - d;
 	char* temp_buffer = (char*)malloc(nlpow * unit_size); // temporary buffer
-	int spoint = 1, distance = myPow(r, w-1), next_distance = myPow(r, w);
+	int spoint = 1, distance = myPow(r, w-1), next_distance = distance*r;
     for (int x = w-1; x > -1; x--) {
     	int ze = (x == w - 1)? r - d: r;
     	for (int z = ze-1; z > 0; z--) {
@@ -48,7 +48,6 @@ void uniform_modified_inverse_r_bruck(int r, char *sendbuf, int sendcount, MPI_D
 					memcpy(&temp_buffer[unit_size*ci++], &recvbuf[id*unit_size], unit_size);
 				}
 			}
-
 
     		// send and receive
     		int recv_proc = (rank + spoint) % nprocs; // receive data from rank - 2^step process

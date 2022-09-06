@@ -13,7 +13,7 @@ void uniform_isplit_r_bruck(int n, int r, char *sendbuf, int sendcount, MPI_Data
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &nprocs);
 
-	if (nprocs % n > 0) {
+	if (nprocs % n > 0 || n >= nprocs) {
 		if	(rank == 0)
 			std::cout << "ERROR: the process count should be divided by the process count of a group." << std::endl;
 		 MPI_Abort(comm, -1);
