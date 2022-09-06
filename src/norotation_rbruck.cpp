@@ -40,8 +40,6 @@ void uniform_norot_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Dataty
     		for (int i = spoint; i < nprocs; i += next_distance) {
     			int dis = (i + distance < nprocs)? distance: (nprocs - i);
     			tsd += dis;
-//    			if (rank == 0)
-//    				std::cout << i << " " << dis << std::endl;
 //    			for (int j = i; j < (i+distance); j++) {
 //    				if (j > nprocs - 1 ) { break; }
 //    				int id = (j + rank) % nprocs;
@@ -49,17 +47,6 @@ void uniform_norot_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Dataty
 //    				memcpy(&temp_buffer[unit_size*ci++], &sendbuf[id*unit_size], unit_size);
 //    			}
     		}
-    		if (rank == 0)
-    			std::cout << x << " " << z << " " << tsd << std::endl;
-
-
-//    		if (rank == 1 && x == 0 && z == 1) {
-//    			for (int i = 0; i < di; i++) {
-//					long long a;
-//					memcpy(&a, &temp_buffer[i*unit_size], unit_size);
-//					std::cout << a << std::endl;
-//    			}
-//    		}
 //
 //    		// send and receive
 //    		int recv_proc = (rank - spoint + nprocs) % nprocs; // receive data from rank - 2^step process
@@ -78,14 +65,8 @@ void uniform_norot_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Dataty
     }
     free(temp_buffer);
 
-//    // local rotation
+
 //	for (int i = 0; i < nprocs; i++) {
-//		int index = (rank - i + nprocs) % nprocs;
-//		memcpy(&recvbuf[index*unit_size], &sendbuf[i*unit_size], unit_size);
-//	}
-//
-//	for (int i = 0; i < nprocs; i++) {
-//
 //		if (rank == 3) {
 //			long long a;
 //			memcpy(&a, &sendbuf[i*unit_size], unit_size);
