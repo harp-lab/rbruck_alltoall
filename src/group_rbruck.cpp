@@ -49,7 +49,8 @@ void uniform_isplit_r_bruck(int n, int r, char *sendbuf, int sendcount, MPI_Data
 		}
 	}
 
-	int max_sd = glpow * n; // max send data block count
+	int max1 = glpow * n, max2 = pow(r, sw-1)*ngroup;
+	int max_sd = (max1 > max2)? max1: max2; // max send data block count
 	int sent_blocks[max_sd];
 	int di = 0, ci = 0;
 
