@@ -7,7 +7,7 @@
 
 #include "radix_r_bruck.h"
 
-void speadout_alltoall(char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm) {
+void spreadout_alltoall(char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm) {
 
 	int rank, nprocs;
 	MPI_Comm_rank(comm, &rank);
