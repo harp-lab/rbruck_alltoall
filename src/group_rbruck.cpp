@@ -33,6 +33,11 @@ void uniform_isplit_r_bruck(int n, int r, char *sendbuf, int sendcount, MPI_Data
 	int grank = rank % n; // rank of each process in a group
 	int gid = rank / n; // group id
 
+	int max1 = glpow * n, max2 = pow(r, sw-1)*ngroup;
+	int max_sd = (max1 > max2)? max1: max2; // max send data block count
+
+	char* temp_buffer = (char*)malloc(max_sd * unit_size); // temporary buffer
+
 	// Initial rotation phase for intra-Bruck
 	for (int i = 0; i < ngroup; i++) {
 		int gsp = i*n;
@@ -40,21 +45,16 @@ void uniform_isplit_r_bruck(int n, int r, char *sendbuf, int sendcount, MPI_Data
 			int id = i * n + j;
 			int rid = gsp + (2 * grank - j + n) % n;
 			if (rid == id || recvbuf[id] == '1') { continue; }
-			long long temp = 0;
-			memcpy(&temp, sendbuf+(id*unit_size), unit_size);
+			memcpy(temp_buffer, sendbuf+(id*unit_size), unit_size);
 			memcpy(sendbuf+(id*unit_size), sendbuf+(rid*unit_size), unit_size);
-			memcpy(sendbuf+(rid*unit_size), &temp, unit_size);
+			memcpy(sendbuf+(rid*unit_size), temp_buffer, unit_size);
 			recvbuf[id] = '1';
 			recvbuf[rid] = '1';
 		}
 	}
 
-	int max1 = glpow * n, max2 = pow(r, sw-1)*ngroup;
-	int max_sd = (max1 > max2)? max1: max2; // max send data block count
 	int sent_blocks[max_sd];
 	int di = 0, ci = 0;
-
-	char* temp_buffer = (char*)malloc(max_sd * unit_size); // temporary buffer
 
 	// Intra-Bruck
 	int spoint = 1, distance = 1, next_distance = r;
