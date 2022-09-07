@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     run_radix_r_bruck(5, ncores, nprocs, bases, 1);
 
     // actual running
-    run_radix_r_bruck(5, ncores, nprocs, bases, 0);
+    run_radix_r_bruck(50, ncores, nprocs, bases, 0);
 
 	MPI_Finalize();
     return 0;
