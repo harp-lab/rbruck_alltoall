@@ -42,8 +42,6 @@ int main(int argc, char **argv)
 
 void running_test(int loopCount, int iteCount, int warmup) {
 
-//    int mesgsize = 128;
-
     for (int mesgsize = 32; mesgsize <= 8192; mesgsize *= 2) {
 
         char * sendbuf = (char*)malloc(mesgsize*sizeof(char));

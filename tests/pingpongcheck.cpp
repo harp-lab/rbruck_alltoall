@@ -20,17 +20,17 @@ int main(int argc, char **argv) {
     if (MPI_Comm_rank(MPI_COMM_WORLD, &rank) != MPI_SUCCESS)
     	std::cout << "ERROR: MPI_Comm_rank error\n" << std::endl;
 
-    run(30, 0); // warm-up only
+    run(30, 1); // warm-up only
     MPI_Barrier(MPI_COMM_WORLD);
 
-    run(10, 0);
+    run(100, 0);
 
 	MPI_Finalize();
     return 0;
 }
 
 void run(int ite_count, int warmup) {
-    std::vector<double> times;
+
     for (int count = 4; count <= 2048; count *= 2) {
 		int send_data[count];
 		std::fill_n(send_data, count, rank);
@@ -45,18 +45,12 @@ void run(int ite_count, int warmup) {
 				MPI_Send(&send_data, count, MPI_INT, (nprocs-1), 0, MPI_COMM_WORLD);
 			double end = MPI_Wtime();
 			double time = end - Start;
-			times.push_back(time);
-    	}
 
-    	if (warmup == 0) {
-			int j = 0;
-			for (int count = 4; count <= 2048; count *= 2) {
+			if (warmup == 0) {
 				double max_time = 0;
-				MPI_Allreduce(&times[j], &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-
-				if (times[j] == max_time)
-					std::cout << rank << " " << count << " " << max_time << std::endl;
-				j++;
+				MPI_Allreduce(&time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+				if (time == max_time)
+					std::cout << nprocs << " " << count << " " << max_time << std::endl;
 			}
     	}
     }
