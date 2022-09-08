@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     running_test(loopCount, 20, 1);
 
     // running test
-    running_test(loopCount, 40, 0);
+    running_test(loopCount, 100, 0);
 
 	MPI_Finalize();
     return 0;
