@@ -32,4 +32,6 @@ void optimized_radix_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype s
 
 void spreadout_alltoall(char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);
 
+void uniform_inverse_isplit_r_bruck(int n, int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm);
+
 #endif /* SRC_RADIX_R_BRUCK_H_ */
