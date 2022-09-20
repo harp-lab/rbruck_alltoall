@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     for (int i = 2; i < argc; i++)
     	bases.push_back(atoi(argv[i]));
 
-     warm-up only
+    // warm-up only
     run_radix_r_bruck(10, ncores, nprocs, bases, 1);
 
     // actual running
