@@ -31,10 +31,10 @@ int main(int argc, char **argv)
     int loopCount = ceil(log2(nprocs));
 
     // for warm-up only
-    running_test(loopCount, 20, 1);
+    running_test(loopCount, 50, 1);
 
     // running test
-    running_test(loopCount, 100, 0);
+    running_test(loopCount, 500, 0);
 
 	MPI_Finalize();
     return 0;
