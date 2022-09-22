@@ -49,6 +49,7 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 		double st = MPI_Wtime();
 		long long* send_buffer = new long long[n*nprocs];
 		long long* recv_buffer = new long long[n*nprocs];
+		long long* sendbuf = new long long[n*nprocs];
 		double et = MPI_Wtime();
 		double allocate_time = et - st;
 
@@ -90,31 +91,33 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 //		}
 //
 //		MPI_Barrier(MPI_COMM_WORLD);
+
+		for (int p=0; p<n*nprocs; p++) {
+			long long value = p/n + rank * 10;
+			send_buffer[p] = value;
+		}
 //
 		for (int it=0; it < loopcount; it++) {
 
 			st = MPI_Wtime();
-			for (int p=0; p<n*nprocs; p++) {
-				long long value = p/n + rank * 10;
-				send_buffer[p] = value;
-			}
+			memcpy(sendbuf, send_buffer, n*nprocs*sizeof(long long));
 //			memset(recv_buffer, 0, n*nprocs*sizeof(long long));
 			et = MPI_Wtime();
 			double initial_time = et - st;
 
 			double comm_start = MPI_Wtime();
-			MPI_Alltoall((char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+			MPI_Alltoall((char*)sendbuf, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
 			double comm_end = MPI_Wtime();
 			double total_time = comm_end - comm_start;
 
 			// check if correct
 			st = MPI_Wtime();
-			int error = 0;
-			for (int d = 0; d < n*nprocs; d++) {
-				if ( (recv_buffer[d] % 10) != (rank % 10) ) error++;
-			}
-			if (rank == 0 && error > 0)
-				std::cout << "[MPIAlltoall] has errors" << std::endl;
+//			int error = 0;
+//			for (int d = 0; d < n*nprocs; d++) {
+//				if ( (recv_buffer[d] % 10) != (rank % 10) ) error++;
+//			}
+//			if (rank == 0 && error > 0)
+//				std::cout << "[MPIAlltoall] has errors" << std::endl;
 			et = MPI_Wtime();
 			double error_time = et - st;
 
@@ -267,6 +270,7 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 
 		delete[] send_buffer;
 		delete[] recv_buffer;
+		delete[] sendbuf;
 	}
 
 }
