@@ -98,7 +98,7 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 				long long value = p/n + rank * 10;
 				send_buffer[p] = value;
 			}
-			memset(recv_buffer, 0, n*nprocs*sizeof(long long));
+//			memset(recv_buffer, 0, n*nprocs*sizeof(long long));
 			et = MPI_Wtime();
 			double initial_time = et - st;
 
