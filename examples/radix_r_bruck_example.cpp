@@ -32,10 +32,10 @@ int main(int argc, char **argv) {
     	bases.push_back(atoi(argv[i]));
 
     // warm-up only
-    run_radix_r_bruck(5, ncores, nprocs, bases, 1);
+    run_radix_r_bruck(1, ncores, nprocs, bases, 1);
 
     // actual running
-    run_radix_r_bruck(50, ncores, nprocs, bases, 0);
+    run_radix_r_bruck(30, ncores, nprocs, bases, 0);
 
 	MPI_Finalize();
     return 0;
