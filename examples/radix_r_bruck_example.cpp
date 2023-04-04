@@ -8,6 +8,9 @@
 #include "radix_r_bruck.h"
 #include <typeinfo>
 
+double intra_time = 0;
+double inter_time = 0;
+
 static int rank, nprocs;
 static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector<int> bases, int warmup);
 
@@ -28,13 +31,12 @@ int main(int argc, char **argv) {
     int loopCount = atoi(argv[1]);
     int ncores = atoi(argv[2]);
 
-
     std::vector<int> bases;
     for (int i = 3; i < argc; i++)
     	bases.push_back(atoi(argv[i]));
 
     // warm-up only
-    run_radix_r_bruck(1, ncores, nprocs, bases, 1);
+    run_radix_r_bruck(5, ncores, nprocs, bases, 1);
 
     // actual running
     run_radix_r_bruck(loopCount, ncores, nprocs, bases, 0);
@@ -91,22 +93,22 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 //		MPI_Barrier(MPI_COMM_WORLD);
 
 //
-//		for (int it=0; it < loopcount; it++) {
-//
-//			double comm_start = MPI_Wtime();
-//			MPI_Alltoall((char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
-//			double comm_end = MPI_Wtime();
-//			double total_time = comm_end - comm_start;
-//
-//			if (warmup == 0) {
-//				double max_time = 0;
-//				MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-//				if (total_time == max_time)
-//					std::cout << "[MPIAlltoall] " << nprocs << ", " << n << ", " <<  max_time << std::endl;
-//			}
-//		}
-//
-//		MPI_Barrier(MPI_COMM_WORLD);
+		for (int it=0; it < loopcount; it++) {
+
+			double comm_start = MPI_Wtime();
+			MPI_Alltoall((char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+			double comm_end = MPI_Wtime();
+			double total_time = comm_end - comm_start;
+
+			if (warmup == 0) {
+				double max_time = 0;
+				MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+				if (total_time == max_time)
+					std::cout << "[MPIAlltoall] " << nprocs << ", " << n << ", " <<  max_time << std::endl;
+			}
+		}
+
+		MPI_Barrier(MPI_COMM_WORLD);
 //
 //		for (int i = 0; i < basecount; i++) {
 //			for (int it=0; it < loopcount; it++) {
@@ -214,7 +216,7 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 				memset(recv_buffer, 0, n*nprocs*sizeof(long long));
 
 				double st = MPI_Wtime();
-				uniform_isplit_r_bruck(ncores, bases[i], (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+				uniform_inverse_isplit_r_bruck(ncores, bases[i], bases[i], (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
 				double et = MPI_Wtime();
 				double total_time = et - st;
 
@@ -223,6 +225,7 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 				for (int d = 0; d < n*nprocs; d++) {
 					if ( (recv_buffer[d] % 10) != (rank % 10) ) error++;
 				}
+
 				if (rank == 0 && error > 0)
 					std::cout << "[GourpRbruck] " << bases[i] << " has errors" << std::endl;
 
@@ -232,7 +235,7 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 					MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
 
 					if (total_time == max_time)
-						std::cout << "[GourpRbruck] " << nprocs << ", " << n << ", " << bases[i] << ", " << max_time << std::endl;
+						std::cout << "[GourpRbruck] " << nprocs << ", " << n << ", " << bases[i] << ", " << max_time << ", " << intra_time << " " << inter_time << std::endl;
 				}
 			}
 		}
