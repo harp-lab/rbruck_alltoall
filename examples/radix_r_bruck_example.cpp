@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     	bases.push_back(atoi(argv[i]));
 
     // warm-up only
-    run_radix_r_bruck(5, ncores, nprocs, bases, 1);
+    run_radix_r_bruck(1, ncores, nprocs, bases, 1);
 
     // actual running
     run_radix_r_bruck(loopCount, ncores, nprocs, bases, 0);
@@ -57,40 +57,42 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 		MPI_Barrier(MPI_COMM_WORLD);
 
 //		for (int i = 0; i < basecount; i++) {
-//			for (int it=0; it < loopcount; it++) {
-//
-//				for (int p=0; p<n*nprocs; p++) {
-//					long long value = p/n + rank * 10;
-//					send_buffer[p] = value;
-//				}
-//
-//				double st = MPI_Wtime();
-//				uniform_modified_inverse_r_bruck(bases[i], (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
-//				double et = MPI_Wtime();
-//				double total_time = et - st;
-//
-////				// check if correct
-////				int error = 0;
-////				for (int d = 0; d < n*nprocs; d++) {
-////					if ( (recv_buffer[d] % 10) != (rank % 10) )
-////						error++;
-//////						std::cout << "EROOR VALUE: " << rank << " " << d << " " << recv_buffer[d] << std::endl;
-////				}
-////				if (rank == 0 && error > 0)
-////					std::cout << "[ModInverseRbruck] " << bases[i] << " has errors" << std::endl;
-//
-//
-//				if (warmup == 0) {
-//					double max_time = 0;
-//					MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-//
-//					if (total_time == max_time)
-//						std::cout << "[ModInverseRbruck] " << nprocs << ", " << n << ", " << bases[i] << ", " << max_time << std::endl;
-//				}
-//			}
+		int r  = ceil(sqrt(nprocs));
+		for (int it=0; it < loopcount; it++) {
+
+			for (int p=0; p<n*nprocs; p++) {
+				long long value = p/n + rank * 10;
+				send_buffer[p] = value;
+			}
+
+			double st = MPI_Wtime();
+//			uniform_modified_inverse_r_bruck(bases[i], (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+			uniform_modified_inverse_r_bruck(r, (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+			double et = MPI_Wtime();
+			double total_time = et - st;
+
+			// check if correct
+			int error = 0;
+			for (int d = 0; d < n*nprocs; d++) {
+				if ( (recv_buffer[d] % 10) != (rank % 10) )
+					error++;
+//						std::cout << "EROOR VALUE: " << rank << " " << d << " " << recv_buffer[d] << std::endl;
+			}
+			if (rank == 0 && error > 0)
+				std::cout << "[ModInverseRbruck] " << r << " has errors" << std::endl;
+
+
+			if (warmup == 0) {
+				double max_time = 0;
+				MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+
+				if (total_time == max_time)
+					std::cout << "[ModInverseRbruck] " << nprocs << ", " << n << ", " << r << ", " << max_time << std::endl;
+			}
+		}
 //		}
 
-//		MPI_Barrier(MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM_WORLD);
 
 //
 		for (int it=0; it < loopcount; it++) {
@@ -206,39 +208,42 @@ static void run_radix_r_bruck(int loopcount, int ncores, int nprocs, std::vector
 //		MPI_Barrier(MPI_COMM_WORLD);
 
 
-		for (int i = 0; i < basecount; i++) {
-			for (int it=0; it < loopcount; it++) {
+//		for (int i = 0; i < basecount; i++) {
+		int r2 = nprocs / ncores;
 
-				for (int p=0; p<n*nprocs; p++) {
-					long long value = p/n + rank * 10;
-					send_buffer[p] = value;
-				}
-				memset(recv_buffer, 0, n*nprocs*sizeof(long long));
+		for (int it=0; it < loopcount; it++) {
 
-				double st = MPI_Wtime();
-				uniform_inverse_isplit_r_bruck(ncores, bases[i], bases[i], (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
-				double et = MPI_Wtime();
-				double total_time = et - st;
+			for (int p=0; p<n*nprocs; p++) {
+				long long value = p/n + rank * 10;
+				send_buffer[p] = value;
+			}
+			memset(recv_buffer, 0, n*nprocs*sizeof(long long));
 
-				// check if correct
-				int error = 0;
-				for (int d = 0; d < n*nprocs; d++) {
-					if ( (recv_buffer[d] % 10) != (rank % 10) ) error++;
-				}
+			double st = MPI_Wtime();
+			uniform_inverse_isplit_r_bruck(ncores, r, r2, (char*)send_buffer, n, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, n, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+			double et = MPI_Wtime();
+			double total_time = et - st;
 
-				if (rank == 0 && error > 0)
-					std::cout << "[GourpRbruck] " << bases[i] << " has errors" << std::endl;
+			// check if correct
+			int error = 0;
+			for (int d = 0; d < n*nprocs; d++) {
+				if ( (recv_buffer[d] % 10) != (rank % 10) ) error++;
+			}
+
+			if (rank == 0 && error > 0)
+				std::cout << "[GourpRbruck] " << r << " " << r2 << " has errors" << std::endl;
 
 
-				if (warmup == 0) {
-					double max_time = 0;
-					MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+			if (warmup == 0) {
+				double max_time = 0;
+				MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
 
-					if (total_time == max_time)
-						std::cout << "[GourpRbruck] " << nprocs << ", " << n << ", " << bases[i] << ", " << max_time << ", " << intra_time << " " << inter_time << std::endl;
-				}
+				if (total_time == max_time)
+					std::cout << "[GourpRbruck] " << nprocs << ", " << n << ", " << r << ", " << r2 << ", " << max_time << ", " << std::endl;
+//						std::cout << "[GourpRbruck] " << nprocs << ", " << n << ", " << bases[i] << ", " << max_time << ", " << intra_time << " " << inter_time << std::endl;
 			}
 		}
+//		}
 
 //		MPI_Barrier(MPI_COMM_WORLD);
 
