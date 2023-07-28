@@ -26,12 +26,14 @@ int main(int argc, char **argv) {
 
     	calculate_commsteps_and_datablock_counts(nprocs, r, the_sd_pstep);
 
-		std::cout << nprocs << " " << r << " " <<the_sd_pstep.size() << " [";
+//		std::cout << nprocs << " " << r << " " <<the_sd_pstep.size() << " [";
 		for (int s = 0; s < the_sd_pstep.size(); s++) {
-			std::cout << the_sd_pstep[s] << " ";
+//			std::cout << the_sd_pstep[s] << " ";
 			total_dc += the_sd_pstep[s];
 		}
-		std::cout << "] " << total_dc << std::endl;
+//		std::cout << "] " << total_dc << std::endl;
+
+    	std::cout << r << " " << the_sd_pstep.size() << " " << total_dc << std::endl;
     }
 
     return 0;

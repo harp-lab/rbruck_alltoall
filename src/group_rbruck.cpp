@@ -145,6 +145,8 @@ void uniform_inverse_isplit_r_bruck(int n, int r1, int r2, char *sendbuf, int se
 
     if (r1 < 2 || r2 < 2) { r1 = 2; }
 
+//    std::cout << nprocs << ", " << n << std::endl;
+
 	if (nprocs % n > 0 || n >= nprocs) {
 		if	(rank == 0)
 			std::cout << "ERROR: the process count should be divided by the process count of a group." << std::endl;
