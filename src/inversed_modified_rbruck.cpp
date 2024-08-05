@@ -7,7 +7,10 @@
 
 #include "radix_r_bruck.h"
 
-void uniform_modified_inverse_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype sendtype, char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm) {
+std::vector<double> invIteTimes;
+
+void uniform_modified_inverse_r_bruck(int r, char *sendbuf, int sendcount, MPI_Datatype sendtype,
+		char *recvbuf, int recvcount, MPI_Datatype recvtype,  MPI_Comm comm) {
 
 	int rank, nprocs;
     MPI_Comm_rank(comm, &rank);
@@ -36,6 +39,9 @@ void uniform_modified_inverse_r_bruck(int r, char *sendbuf, int sendcount, MPI_D
     for (int x = w-1; x > -1; x--) {
     	int ze = (x == w - 1)? r - d: r;
     	for (int z = ze-1; z > 0; z--) {
+
+    		double st = MPI_Wtime();
+
     		// get the sent data-blocks
     		// copy blocks which need to be sent at this step
     		di = 0; ci = 0;
@@ -60,6 +66,10 @@ void uniform_modified_inverse_r_bruck(int r, char *sendbuf, int sendcount, MPI_D
     			long long offset = sent_blocks[i] * unit_size;
     			memcpy(recvbuf+offset, sendbuf+(i*unit_size), unit_size);
     		}
+    		double et = MPI_Wtime();
+    		double curtime = et - st;
+
+    		invIteTimes.push_back(curtime);
     	}
 		distance /= r;
 		next_distance /= r;

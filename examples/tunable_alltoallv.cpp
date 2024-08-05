@@ -91,28 +91,28 @@ static void run_tunable_alltoallv(int loopcount, int nprocs, std::vector<int> ba
 
 
 		// two-phase algorithm
-//		for (int i = 0; i < basecount; i++){
-//			for (int it = 0; it < loopcount; it++) {
+		for (int i = 0; i < basecount; i++){
+			for (int it = 0; it < loopcount; it++) {
 
-//				double st = MPI_Wtime();
-//				twophase_tuable_radix_alltoallv(bases[i], (char*)send_buffer, sendcounts, sdispls, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, recvcounts, rdispls, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
-//				double et = MPI_Wtime();
-//				double total_time = et - st;
+				double st = MPI_Wtime();
+				twophase_tuable_radix_alltoallv(bases[i], (char*)send_buffer, sendcounts, sdispls, MPI_UNSIGNED_LONG_LONG, (char*)recv_buffer, recvcounts, rdispls, MPI_UNSIGNED_LONG_LONG, MPI_COMM_WORLD);
+				double et = MPI_Wtime();
+				double total_time = et - st;
 
-	//			// check correctness
-	//			for (int i=0; i < roffset; i++) {
-	//				if ( (recv_buffer[i] % 10) != (rank % 10) )
-	//					std::cout << "TwoPhase EROOR: " << rank << " " << i << " " << recv_buffer[i] << std::endl;
-	//			}
-	//
-	//			if (warmup == 0) {
-	//				double max_time = 0;
-	//				MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-	//				if (total_time == max_time)
-	//					std::cout << "[TwoPhase] " << nprocs << " " << n << " " <<  max_time << std::endl;
-	//			}
-//			}
-//		}
+				// check correctness
+				for (int i=0; i < roffset; i++) {
+					if ( (recv_buffer[i] % 10) != (rank % 10) )
+						std::cout << "TwoPhase EROOR: " << rank << " " << i << " " << recv_buffer[i] << std::endl;
+				}
+
+				if (warmup == 0) {
+					double max_time = 0;
+					MPI_Allreduce(&total_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+					if (total_time == max_time)
+						std::cout << "[TwoPhase] " << nprocs << " " << n << " " <<  max_time << std::endl;
+				}
+			}
+		}
 
 		MPI_Barrier(MPI_COMM_WORLD);
 

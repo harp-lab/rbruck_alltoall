@@ -13,6 +13,9 @@
 extern double intra_time;
 extern double inter_time;
 
+extern std::vector<double> iteTimes;
+extern std::vector<double> invIteTimes;
+
 int myPow(int x, unsigned int p);
 std::vector<int> convert10tob(int w, int N, int b);
 void calculate_commsteps_and_datablock_counts(int nprocs, int r, std::vector<int>& the_sd_pstep);
